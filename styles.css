@@ -1,674 +1,585 @@
-// Основной класс для премиум навигации
-class PremiumNavigation {
-    constructor() {
-        this.sections = document.querySelectorAll('section');
-        this.navLinks = document.querySelectorAll('.nav-link');
-        this.progressBar = this.createProgressBar();
-        this.navDots = this.createNavDots();
-        this.init();
+/* ===== БАЗОВЫЕ СТИЛИ ===== */
+:root {
+    --primary: #d4af37;
+    --primary-rgb: 212, 175, 55;
+    --background: #0d0d0d;
+    --background-light: #1a1a1a;
+    --text: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ===== ТИПОГРАФИЯ ===== */
+.font-playfair {
+    font-family: 'Playfair Display', serif;
+}
+
+.text-gold {
+    color: var(--primary);
+}
+
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: var(--primary);
+}
+
+/* ===== ШАПКА ===== */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(13, 13, 13, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    z-index: 1000;
+    padding: 1rem 0;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo a {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--text);
+    text-decoration: none;
+}
+
+#nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.nav-link {
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: var(--primary);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.menu-toggle {
+    display: none;
+    font-size: 1.5rem;
+    color: var(--primary);
+    cursor: pointer;
+}
+
+/* ===== ГЛАВНАЯ СЕКЦИЯ ===== */
+.hero-section {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a1a2e 50%, #0d0d0d 100%);
+}
+
+.site-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    margin-bottom: 2rem;
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 3rem;
+    opacity: 0.9;
+}
+
+.hero-subtitle .line-1,
+.hero-subtitle .line-2 {
+    margin: 0.5rem 0;
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.scroll-line {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(to bottom, var(--primary), transparent);
+    animation: scrollBounce 2s infinite;
+}
+
+@keyframes scrollBounce {
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(10px); opacity: 1; }
+}
+
+/* ===== СЕКЦИИ ===== */
+section {
+    padding: 100px 0;
+}
+
+.about-section {
+    background: var(--background-light);
+}
+
+.expertise-section {
+    background: var(--background);
+}
+
+.partners-section {
+    background: var(--background-light);
+}
+
+.investment-section {
+    background: var(--background);
+}
+
+.esg-section {
+    background: var(--background-light);
+}
+
+.contacts-section {
+    background: var(--background);
+}
+
+/* ===== КАРТОЧКИ ===== */
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.about-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 10px;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.about-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1);
+}
+
+.about-card h3 {
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+/* Экспертиза */
+.expertise-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.expertise-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2.5rem 2rem;
+    border-radius: 15px;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.expertise-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary);
+    box-shadow: 0 20px 40px rgba(212, 175, 55, 0.15);
+}
+
+.expertise-icon {
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+}
+
+.expertise-card h3 {
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.expertise-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* Инвестиции */
+.investment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.investment-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.investment-card:hover {
+    transform: scale(1.05);
+    border-color: var(--primary);
+}
+
+.investment-icon {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+/* Партнеры */
+.partners-container {
+    overflow: hidden;
+    padding: 2rem 0;
+}
+
+.partners-track {
+    display: flex;
+    animation: scrollPartners 30s linear infinite;
+    gap: 3rem;
+}
+
+.partner-item {
+    flex: 0 0 auto;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 10px;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.partner-logo {
+    color: var(--text);
+    font-weight: 600;
+    text-align: center;
+}
+
+@keyframes scrollPartners {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* ESG Калькулятор */
+.calculator-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 3rem;
+    border-radius: 15px;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.calculator-form {
+    text-align: center;
+}
+
+.calculator-form label {
+    display: block;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.calculator-form select {
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 5px;
+    color: var(--text);
+    font-size: 1rem;
+}
+
+.calculate-btn {
+    width: 100%;
+    padding: 1.2rem;
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.calculate-btn:hover {
+    background: rgba(212, 175, 55, 0.2);
+    transform: translateY(-2px);
+}
+
+.results-container {
+    margin-top: 2rem;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    display: none;
+}
+
+/* Контакты */
+.contacts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.contact-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 10px;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.contact-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+}
+
+.contact-icon {
+    font-size: 2rem;
+    color: var(--primary);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 50%;
+}
+
+.contact-info h3 {
+    margin-bottom: 0.5rem;
+}
+
+.contact-info a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.contact-info a:hover {
+    color: var(--primary);
+}
+
+/* Футер */
+.footer {
+    background: var(--background-light);
+    padding: 3rem 0 1rem;
+    border-top: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 3rem;
+    margin-bottom: 2rem;
+}
+
+.footer-section h3,
+.footer-section h4 {
+    margin-bottom: 1rem;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+}
+
+/* ===== PARTICLE.JS СТИЛИ ===== */
+#particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+.video-overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(13, 13, 13, 0.7);
+    z-index: -1;
+}
+
+/* ===== ЦИТАТА ===== */
+.philosophy-quote {
+    max-width: 800px;
+    margin: 0 auto 4rem;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 4px solid var(--primary);
+    border-radius: 0 10px 10px 0;
+    font-style: italic;
+    font-size: 1.2rem;
+    line-height: 1.6;
+}
+
+.philosophy-quote cite {
+    display: block;
+    margin-top: 1rem;
+    text-align: right;
+    font-style: normal;
+    font-weight: 600;
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
     }
 
-    createProgressBar() {
-        const bar = document.createElement('div');
-        bar.className = 'scroll-progress';
-        document.body.appendChild(bar);
-        return bar;
+    #nav-menu {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        flex-direction: column;
+        background: rgba(13, 13, 13, 0.95);
+        padding: 2rem;
+        gap: 1rem;
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
     }
 
-    createNavDots() {
-        if (window.innerWidth <= 768) return null;
-
-        const container = document.createElement('div');
-        container.className = 'nav-dots';
-        
-        this.sections.forEach((section, index) => {
-            if (section.id === 'home') return;
-            
-            const dot = document.createElement('div');
-            dot.className = 'nav-dot';
-            dot.dataset.section = section.id;
-            
-            const sectionName = this.getSectionName(section.id);
-            dot.setAttribute('data-section', sectionName);
-
-            dot.addEventListener('click', () => {
-                this.scrollToSection(section.id);
-            });
-
-            container.appendChild(dot);
-        });
-
-        document.body.appendChild(container);
-        return container;
+    #nav-menu.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
     }
 
-    getSectionName(sectionId) {
-        const names = {
-            'about': 'О нас',
-            'expertise': 'Экспертиза',
-            'partners': 'Партнеры',
-            'investment-focus': 'Инвестиции',
-            'esg-calculator': 'ESG',
-            'feedback': 'Контакты'
-        };
-        return names[sectionId] || sectionId;
+    .section-title {
+        font-size: 2.5rem;
     }
 
-    scrollToSection(sectionId) {
-        const section = document.getElementById(sectionId);
-        if (section) {
-            const headerHeight = document.getElementById('header').offsetHeight;
-            const targetPosition = section.offsetTop - headerHeight;
-
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            });
-        }
+    section {
+        padding: 60px 0;
     }
 
-    init() {
-        window.addEventListener('scroll', this.throttle(this.updateProgress, 16));
-        this.setupScrollSpy();
+    .site-title {
+        font-size: 2.5rem;
     }
 
-    updateProgress = () => {
-        const winHeight = window.innerHeight;
-        const docHeight = document.documentElement.scrollHeight;
-        const scrollTop = window.pageYOffset;
-        const scrollPercent = (scrollTop / (docHeight - winHeight)) * 100;
-        this.progressBar.style.width = scrollPercent + '%';
+    .hero-subtitle {
+        font-size: 1.2rem;
     }
 
-    setupScrollSpy() {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    this.setActiveLink(entry.target.id);
-                    this.setActiveDot(entry.target.id);
-                }
-            });
-        }, { 
-            threshold: 0.3,
-            rootMargin: '-20% 0px -20% 0px'
-        });
-
-        this.sections.forEach(section => observer.observe(section));
+    .about-grid,
+    .expertise-grid,
+    .investment-grid,
+    .contacts-grid {
+        grid-template-columns: 1fr;
     }
 
-    setActiveLink(sectionId) {
-        this.navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === `#${sectionId}`) {
-                link.classList.add('active');
-            }
-        });
+    .calculator-container {
+        padding: 2rem;
+        margin: 0 1rem;
     }
 
-    setActiveDot(sectionId) {
-        if (!this.navDots) return;
-        
-        const dots = this.navDots.querySelectorAll('.nav-dot');
-        dots.forEach(dot => {
-            dot.classList.remove('active');
-            if (dot.dataset.section === sectionId) {
-                dot.classList.add('active');
-            }
-        });
-    }
-
-    throttle(func, limit) {
-        let inThrottle;
-        return function() {
-            const args = arguments;
-            const context = this;
-            if (!inThrottle) {
-                func.apply(context, args);
-                inThrottle = true;
-                setTimeout(() => inThrottle = false, limit);
-            }
-        }
+    .contact-card {
+        flex-direction: column;
+        text-align: center;
     }
 }
 
-// Класс для интерактивных эффектов
-class InteractiveEffects {
-    constructor() {
-        this.initHoverEffects();
-        this.initCustomCursor();
-        this.initMagneticButtons();
+@media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
     }
 
-    initHoverEffects() {
-        // 3D эффект для карточек
-        document.querySelectorAll('.expertise-card, .about-card').forEach(card => {
-            card.addEventListener('mousemove', this.handleCardMove.bind(this));
-            card.addEventListener('mouseleave', this.handleCardLeave.bind(this));
-        });
+    .section-title {
+        font-size: 2rem;
     }
 
-    handleCardMove(e) {
-        if (window.innerWidth <= 768) return;
-        
-        const card = e.currentTarget;
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        const rotateY = (x - centerX) / 25;
-        const rotateX = (centerY - y) / 25;
-        
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+    .site-title {
+        font-size: 2rem;
     }
 
-    handleCardLeave(e) {
-        const card = e.currentTarget;
-        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
-    }
-
-    initCustomCursor() {
-        if (window.innerWidth <= 768) return;
-
-        const cursor = document.createElement('div');
-        cursor.className = 'custom-cursor';
-        document.body.appendChild(cursor);
-
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-
-        document.querySelectorAll('a, button, .expertise-card, .about-card').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                cursor.style.transform = 'scale(1.5)';
-                cursor.style.background = 'rgba(212, 175, 55, 0.3)';
-            });
-            
-            el.addEventListener('mouseleave', () => {
-                cursor.style.transform = 'scale(1)';
-                cursor.style.background = 'transparent';
-            });
-        });
-    }
-
-    initMagneticButtons() {
-        document.querySelectorAll('.nav-link, .read-more').forEach(button => {
-            button.addEventListener('mousemove', (e) => {
-                if (window.innerWidth <= 768) return;
-                
-                const rect = button.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const moveX = (x - centerX) * 0.1;
-                const moveY = (y - centerY) * 0.1;
-                
-                button.style.transform = `translate(${moveX}px, ${moveY}px)`;
-            });
-            
-            button.addEventListener('mouseleave', () => {
-                button.style.transform = 'translate(0, 0)';
-            });
-        });
+    .about-card,
+    .expertise-card,
+    .investment-card {
+        padding: 1.5rem;
     }
 }
-
-// Класс для модальных окон
-class PremiumModal {
-    constructor() {
-        this.modal = document.getElementById('popup-modal');
-        this.init();
-    }
-
-    init() {
-        this.setupKeyboardEvents();
-        this.setupBackdropClose();
-    }
-
-    openPopup(expertise) {
-        const data = expertiseData[expertise];
-        if (!data) return;
-
-        this.setContent(data);
-        this.showModal();
-        this.animateIn();
-    }
-
-    setContent(data) {
-        document.getElementById('popup-title').textContent = data.title;
-        document.getElementById('popup-details').innerHTML = data.content;
-    }
-
-    showModal() {
-        this.modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-        
-        // Добавляем blur для фона
-        document.querySelector('main').style.filter = 'blur(5px)';
-    }
-
-    animateIn() {
-        anime({
-            targets: this.modal.querySelector('.popup-content'),
-            scale: [0.8, 1],
-            opacity: [0, 1],
-            duration: 400,
-            easing: 'easeOutBack'
-        });
-    }
-
-    closePopup() {
-        anime({
-            targets: this.modal.querySelector('.popup-content'),
-            scale: 0.8,
-            opacity: 0,
-            duration: 300,
-            easing: 'easeInBack',
-            complete: () => {
-                this.modal.style.display = 'none';
-                document.body.style.overflow = '';
-                document.querySelector('main').style.filter = 'none';
-            }
-        });
-    }
-
-    setupKeyboardEvents() {
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.modal.style.display === 'flex') {
-                this.closePopup();
-            }
-        });
-    }
-
-    setupBackdropClose() {
-        this.modal.addEventListener('click', (e) => {
-            if (e.target === this.modal) {
-                this.closePopup();
-            }
-        });
-    }
-}
-
-// Данные для экспертизы
-const expertiseData = {
-    ai: {
-        title: "Искусственный интеллект и машинное обучение",
-        content: `<p>Используем передовые алгоритмы AI и ML для автоматизированного анализа данных, включая обработку естественного языка, компьютерное зрение и предиктивную аналитику. Наши решения помогают выявлять скрытые закономерности и принимать более обоснованные решения.</p>`,
-    },
-    "big-data": {
-        title: "Анализ больших данных",
-        content: `<p>Обрабатываем миллионы ESG-документов в реальном времени, используя распределенные вычисления и облачные технологии. Наша инфраструктура позволяет анализировать структурированные и неструктурированные данные из различных источников для формирования целостной картины.</p>`,
-    },
-    risks: {
-        title: "Оценка ESG-рисков",
-        content: `<p>Применяем ML и big data для ESG-оценок, создавая многофакторные модели риска, учитывающие как традиционные финансовые показатели, так и нефинансовые метрики устойчивого развития. Наш подход позволяет выявлять скрытые риски и возможности.</p>`,
-    },
-    scaling: {
-        title: "Масштабирование бизнеса",
-        content: `<p>Разрабатываем стратегии устойчивого роста, основанные на глубоком анализе рынка и конкурентной среды. Наша команда помогает компаниям выйти на новые рынки, оптимизировать бизнес-процессы и внедрить инновационные технологии для обеспечения долгосрочного успеха.</p>`,
-    },
-    legal: {
-        title: "Юридическое сопровождение",
-        content: `<p>Защита прав инвесторов и сопровождение сделок на всех этапах, от структурирования до закрытия. Наши юристы специализируются на венчурных инвестициях, M&A, интеллектуальной собственности и международном праве, обеспечивая надежную правовую защиту ваших интересов.</p>`,
-    },
-    patents: {
-        title: "Патентование",
-        content: `<p>Комплексное патентное обеспечение и экспертиза, включая патентный поиск, подготовку и подачу заявок, защиту прав интеллектуальной собственности. Мы помогаем изобретателям и компаниям защитить свои инновации и максимизировать их коммерческую ценность.</p>`,
-    },
-};
-
-// Данные для ESG-калькулятора
-const ratingsData = {
-    solidcore: {
-        ratings: [
-            ["Sustainalytics", "8.5"],
-            ["Refinitiv", "92"],
-            ["MSCI", "AA"],
-            ["RAEX Europe", "A+"],
-            ["NRA ESG", "A1.esg"],
-            ["Средняя согласованность рейтингов", "7.50"],
-            ["Соответствие ЦУР №7", "Высокие показатели"],
-            ["Соответствие ЦУР №5", "Средние показатели"],
-            ["Историческая динамика RAEX Europe", "+5%"],
-            ["Историческая динамика MSCI", "-3%"],
-            ["ESG-профиль (E)", "Отличное управление выбросами CO2"],
-            ["ESG-профиль (S)", "Программы поддержки местных сообществ"],
-            ["ESG-профиль (G)", "Недостаточная прозрачность управления рисками"],
-        ],
-        recommendations: [
-            { title: "Оригинальность", text: "Проект демонстрирует высокую степень уникальности." },
-            { title: "Новизна", text: "Проект подтверждает свою патентную чистоту." },
-            { title: "Проработанность", text: "Проект требует более детального описания целей." },
-            { title: "Эффективность", text: "Проект обладает высокой потенциальной доходностью." },
-            { title: "Ресурсное обеспечение", text: "Проект требует дополнительного анализа потребностей." },
-            { title: "Коммерциализируемость", text: "Проект требует доработки бизнес-модели." },
-        ],
-    },
-};
-
-// Глобальные переменные
-let navigation, effects, modal;
-
-// Основная инициализация
-document.addEventListener("DOMContentLoaded", () => {
-    // Анимация заголовка
-    anime({
-        targets: ".site-title",
-        opacity: [0, 1],
-        translateY: [50, 0],
-        duration: 1500,
-        easing: "easeOutExpo",
-    });
-
-    // Анимация подзаголовка
-    anime({
-        targets: ".hero-subtitle",
-        opacity: [0, 1],
-        translateY: [30, 0],
-        duration: 1000,
-        delay: 1000,
-        easing: "easeOutExpo",
-    });
-
-    // Инициализация AOS
-    AOS.init({
-        duration: 800,
-        easing: "ease",
-        once: true,
-        mirror: false,
-        anchorPlacement: "top-bottom",
-    });
-
-    // Инициализация премиум систем
-    navigation = new PremiumNavigation();
-    effects = new InteractiveEffects();
-    modal = new PremiumModal();
-
-    // Установка текущего года
-    document.getElementById("current-year").textContent = new Date().getFullYear();
-
-    // Инициализация мобильных подсказок
-    initMobileTooltips();
-
-    // Инициализация частиц
-    initParticles();
-});
-
-// Функция для переключения меню
-function toggleMenu() {
-    const menu = document.getElementById("nav-menu");
-    menu.classList.toggle("active");
-}
-
-// Показ/скрытие контактов
-function toggleContacts() {
-    const contacts = document.getElementById("contacts");
-    const button = document.getElementById("show-contacts-btn");
-
-    if (contacts.style.display === "none" || contacts.style.display === "") {
-        contacts.style.display = "block";
-        contacts.style.opacity = "0";
-        contacts.style.transition = "opacity 0.5s ease-in-out";
-
-        setTimeout(() => {
-            contacts.style.opacity = "1";
-        }, 10);
-
-        button.textContent = "Скрыть контакты";
-    } else {
-        contacts.style.opacity = "0";
-
-        setTimeout(() => {
-            contacts.style.display = "none";
-        }, 500);
-
-        button.textContent = "Показать контакты";
-    }
-}
-
-// Инициализация мобильных подсказок
-function initMobileTooltips() {
-    if (window.innerWidth <= 768) {
-        const aboutCards = document.querySelectorAll(".about-card");
-
-        aboutCards.forEach((card) => {
-            card.addEventListener("click", function (e) {
-                this.classList.toggle("tooltip-active");
-
-                aboutCards.forEach((otherCard) => {
-                    if (otherCard !== this) {
-                        otherCard.classList.remove("tooltip-active");
-                    }
-                });
-            });
-        });
-
-        document.addEventListener("click", (e) => {
-            if (!e.target.closest(".about-card")) {
-                aboutCards.forEach((card) => {
-                    card.classList.remove("tooltip-active");
-                });
-            }
-        });
-    }
-}
-
-// Функции для модальных окон (глобальные для обратной совместимости)
-function openPopup(expertise) {
-    modal.openPopup(expertise);
-}
-
-function closePopup() {
-    modal.closePopup();
-}
-
-// ESG калькулятор
-function toggleRatings() {
-    const result = document.getElementById("result");
-    const recommendations = document.getElementById("expert-recommendations");
-    const button = document.getElementById("ratings-button");
-
-    if (!result.classList.contains("active")) {
-        loadRatings();
-        result.classList.add("active");
-        recommendations.classList.add("active");
-        button.textContent = "СКРЫТЬ РЕЙТИНГИ";
-    } else {
-        result.classList.remove("active");
-        recommendations.classList.remove("active");
-        button.textContent = "ЗАГРУЗИТЬ РЕЙТИНГИ";
-    }
-}
-
-function loadRatings() {
-    const company = document.getElementById("company").value;
-    const resultDiv = document.getElementById("result");
-    const recommendationsDiv = document.getElementById("expert-recommendations");
-
-    if (!ratingsData[company]) {
-        resultDiv.innerHTML = "<p>Данные о компании не найдены.</p>";
-        recommendationsDiv.innerHTML = "";
-        return;
-    }
-
-    let tableHTML = `<table class="ratings-table"><thead><tr><th>Показатель</th><th>Оценка</th></tr></thead><tbody>`;
-    ratingsData[company].ratings.forEach((row) => {
-        tableHTML += `<tr><td>${row[0]}</td><td>${row[1]}</td></tr>`;
-    });
-    tableHTML += `</tbody></table>`;
-    resultDiv.innerHTML = tableHTML;
-
-    let recommendationsHTML = `<h3 class="recommendation-title">Экспертные рекомендации</h3><div class="recommendation-grid">`;
-    ratingsData[company].recommendations.forEach((rec) => {
-        recommendationsHTML += `<div class="recommendation-card"><h4>${rec.title}</h4><p>${rec.text}</p></div>`;
-    });
-    recommendationsHTML += `</div><button class="download-button" onclick="downloadExcel()"><i class="fas fa-download"></i> Скачать отчет</button>`;
-    recommendationsDiv.innerHTML = recommendationsHTML;
-}
-
-function downloadExcel() {
-    const company = document.getElementById("company").value;
-    const data = ratingsData[company];
-
-    if (!data) {
-        alert("Данные о компании не найдены.");
-        return;
-    }
-
-    let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Показатель,Оценка\n";
-
-    data.ratings.forEach((row) => {
-        csvContent += `"${row[0]}","${row[1]}"\n`;
-    });
-
-    csvContent += "\nРекомендации\n";
-
-    data.recommendations.forEach((rec) => {
-        csvContent += `"${rec.title}","${rec.text}"\n`;
-    });
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `ESG_Report_${company}_${new Date().toISOString().split("T")[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
-// Плавная прокрутка
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            const headerHeight = document.getElementById('header').offsetHeight;
-            const targetPosition = target.offsetTop - headerHeight;
-
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            });
-
-            // Закрываем меню на мобильных устройствах
-            if (window.innerWidth <= 768) {
-                document.getElementById('nav-menu').classList.remove('active');
-            }
-        }
-    });
-});
-
-// Изменение шапки при скролле
-window.addEventListener('scroll', () => {
-    const header = document.getElementById('header');
-    if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-    } else {
-        header.classList.remove('scrolled');
-    }
-});
-
-// Инициализация частиц
-function initParticles() {
-    if (typeof particlesJS !== 'undefined') {
-        particlesJS('particles-js', {
-            particles: {
-                number: {
-                    value: 60,
-                    density: {
-                        enable: true,
-                        value_area: 800
-                    }
-                },
-                color: {
-                    value: '#d4af37'
-                },
-                shape: {
-                    type: 'circle',
-                },
-                opacity: {
-                    value: 0.4,
-                    random: true,
-                },
-                size: {
-                    value: 3,
-                    random: true,
-                },
-                line_linked: {
-                    enable: true,
-                    distance: 150,
-                    color: '#d4af37',
-                    opacity: 0.2,
-                    width: 1
-                },
-                move: {
-                    enable: true,
-                    speed: 1.5,
-                    direction: 'none',
-                    random: true,
-                    straight: false,
-                    out_mode: 'out',
-                    bounce: false
-                }
-            },
-            interactivity: {
-                detect_on: 'canvas',
-                events: {
-                    onhover: {
-                        enable: true,
-                        mode: 'grab'
-                    },
-                    onclick: {
-                        enable: true,
-                        mode: 'push'
-                    },
-                    resize: true
-                },
-                modes: {
-                    grab: {
-                        distance: 140,
-                        line_linked: {
-                            opacity: 0.3
-                        }
-                    },
-                    push: {
-                        particles_nb: 3
-                    }
-                }
-            },
-            retina_detect: true
-        });
-    }
-}
-
-// Обработка формы обратной связи
-document.getElementById('contact-form')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const submitBtn = this.querySelector('.submit-btn');
-    const originalText = submitBtn.innerHTML;
-    
-    // Имитация отправки
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
-    submitBtn.disabled = true;
-    
-    setTimeout(() => {
-        alert('Сообщение отправлено! Мы свяжемся с вами в ближайшее время.');
-        this.reset();
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-    }, 2000);
-});
-
-// Адаптация к изменению размера окна
-window.addEventListener('resize', () => {
-    // Переинициализация мобильных подсказок при изменении размера
-    initMobileTooltips();
-});
